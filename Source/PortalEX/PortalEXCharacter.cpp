@@ -119,7 +119,7 @@ void APortalEXCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("LeftFire", IE_Pressed, this, &APortalEXCharacter::OnFire);
-	PlayerInputComponent->BindAction("LeftFire", IE_Pressed, this, &APortalEXCharacter::OnFire);
+	//PlayerInputComponent->BindAction("LeftFire", IE_Pressed, this, &APortalEXCharacter::OnFire);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
