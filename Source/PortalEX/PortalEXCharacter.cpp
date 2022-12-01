@@ -9,6 +9,7 @@
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 
@@ -127,7 +128,7 @@ void APortalEXCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APortalEXCharacter::OnResetVR);
 
 	// Bind movement events
-	PlayerInputComponent->BindAxis("MoveForward", this, &APortalEXCharacter::MoveForward);
+	//PlayerInputComponent->BindAxis("MoveForward", this, &APortalEXCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APortalEXCharacter::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
@@ -155,7 +156,16 @@ void APortalEXCharacter::OnFire()
 			}
 			else
 			{
-				const FRotator SpawnRotation = GetControlRotation();
+				
+				auto Direction = Dot3(
+					GetActorUpVector(), GetControlRotation().Vector());
+				FRotator rotation;
+				if (Direction > 0) {
+					rotation = FRotator(0, 90, 0);
+				}else{
+					rotation = FRotator(0, -90, 0);
+				}
+				const FRotator SpawnRotation = rotation;
 				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
 				const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
 
