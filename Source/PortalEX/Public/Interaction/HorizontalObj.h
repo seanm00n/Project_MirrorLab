@@ -27,4 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 		void Interaction(AActor* Projectile);
 	virtual void Interaction_Implementation(AActor* Projectile) override;
+
+	
+
 };

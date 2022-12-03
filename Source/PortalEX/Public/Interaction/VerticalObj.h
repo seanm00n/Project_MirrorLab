@@ -16,6 +16,12 @@ public:
 	// Sets default values for this actor's properties
 	AVerticalObj();
 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameter")
+		float JumpLocation;
+
+	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -27,4 +33,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 		void Interaction(AActor* Projectile);
 	virtual void Interaction_Implementation(AActor* Projectile) override;
+
+	UFUNCTION()
+		void Hit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 };

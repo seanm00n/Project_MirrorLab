@@ -12,13 +12,15 @@ class PORTALEX_API AInteractionBase : public AActor, public IInteractionInterfac
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		UStaticMeshComponent* Mesh;
 
 	
 public:	
 	// Sets default values for this actor's properties
 	AInteractionBase();
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		UStaticMeshComponent* Mesh;
 
 protected:
 	// Called when the game starts or when spawned

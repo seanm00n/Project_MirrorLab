@@ -34,11 +34,15 @@ APortalEXProjectile::APortalEXProjectile()
 
 void APortalEXProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Projectile Hit"));
 	if (OtherActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass())) {
 
+		UE_LOG(LogTemp, Warning, TEXT("ImplementsInterface"));
 		auto Interfact = Cast<IInteractionInterface>(OtherActor);
 		if (Interfact) {
-			Interfact->Interaction_Implementation(this);
+
+			UE_LOG(LogTemp, Warning, TEXT("Interfact"));
+			Interfact->Execute_Interaction(OtherActor, this);
 		}
 	}
 	else {
@@ -48,7 +52,7 @@ void APortalEXProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
 
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		//OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 		Destroy();
 	}
 }

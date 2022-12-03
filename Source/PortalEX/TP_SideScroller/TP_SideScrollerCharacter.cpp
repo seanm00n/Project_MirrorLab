@@ -12,13 +12,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void ATP_SideScrollerCharacter::Interaction_Implementation(AActor* Projectile)
-{
-	if (Cast<APortalEXProjectile>(Projectile)) {
-		Projectile->Destroy();
-	}
-	Jump();
-}
 
 ATP_SideScrollerCharacter::ATP_SideScrollerCharacter()
 {
@@ -100,6 +93,15 @@ void ATP_SideScrollerCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindTouch(IE_Released, this, &ATP_SideScrollerCharacter::TouchStopped);
 }
 
+
+void ATP_SideScrollerCharacter::Interaction_Implementation(AActor* Projectile)
+{
+	UE_LOG(LogTemp, Warning, TEXT("character Interact"))
+		if (Cast<APortalEXProjectile>(Projectile)) {
+			Projectile->Destroy();
+		}
+	Jump();
+}
 
 void ATP_SideScrollerCharacter::BeginPlay()
 {

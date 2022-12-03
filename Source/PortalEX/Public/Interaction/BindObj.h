@@ -34,8 +34,5 @@ public:
 	
 private:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		UStaticMeshComponent* Mesh;
-
 	AActor* BindingProjectileActor;
 };

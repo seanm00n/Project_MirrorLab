@@ -10,6 +10,7 @@ AInteractionBase::AInteractionBase()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
+	RootComponent = Mesh;
 
 }
 

@@ -1,19 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BindObj.h"
+#include "Interaction/BindObj.h"
 #include "PortalEX/PortalEXProjectile.h"
-#include "TP_SideScroller/TP_SideScrollerCharacter.h"
+#include "PortalEX/TP_SideScroller/TP_SideScrollerCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "InteractionInterface.h"
 
 // Sets default values
 ABindObj::ABindObj()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
 	this->OnActorBeginOverlap.AddDynamic(this, &ABindObj::CharacterOverlap);
 }
 
