@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameMode/Stage/PortalEXPlayerStateBase.h"
 
 
 ATP_SideScrollerCharacter::ATP_SideScrollerCharacter()
@@ -160,8 +161,16 @@ void ATP_SideScrollerCharacter::OnFire()
 				FActorSpawnParameters ActorSpawnParams;
 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-				// spawn the projectile at the muzzle
-				World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+				auto playerState = Cast<APortalEXPlayerStateBase>(GetPlayerState());
+				if (playerState && playerState->GetAmmo() > 0) {
+
+					// spawn the projectile at the muzzle
+					auto projectile = World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+					if (projectile) {
+						playerState->UseAmmo();
+					}
+
+				}
 			}
 		}
 	}
