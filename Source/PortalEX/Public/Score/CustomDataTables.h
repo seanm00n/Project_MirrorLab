@@ -14,10 +14,10 @@ struct FScoreTableRow : public FTableRowBase
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Score")
-		int32 BScore;
+	int32 BScore;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Score")
-		int32 CScore;
+	int32 CScore;
 };
 UCLASS()
 class PORTALEX_API ACustomDataTables : public AActor
