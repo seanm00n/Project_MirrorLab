@@ -2,6 +2,7 @@
 
 #include "PortalEXProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "InteractionInterface.h"
 #include "Components/SphereComponent.h"
 
 APortalEXProjectile::APortalEXProjectile() 
@@ -33,11 +34,25 @@ APortalEXProjectile::APortalEXProjectile()
 
 void APortalEXProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Projectile Hit"));
+	if (OtherActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass())) {
+
+		UE_LOG(LogTemp, Warning, TEXT("ImplementsInterface"));
+		auto Interfact = Cast<IInteractionInterface>(OtherActor);
+		if (Interfact) {
+
+			UE_LOG(LogTemp, Warning, TEXT("Interfact"));
+			Interfact->Execute_Interaction(OtherActor, this);
+		}
+	}
+	else {
+		Destroy();
+	}
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 
+		//OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 		Destroy();
 	}
 }
