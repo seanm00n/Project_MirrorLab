@@ -207,7 +207,7 @@ void ATP_SideScrollerCharacter::OnFire()
 void ATP_SideScrollerCharacter::MoveRight(float Value)
 {
 	// add movement in that direction
-	AddMovementInput(FVector(0.f,-1.f,0.f), Value);
+	AddMovementInput(FVector(0.f,1.0f,0.f), Value);
 }
 
 void ATP_SideScrollerCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
