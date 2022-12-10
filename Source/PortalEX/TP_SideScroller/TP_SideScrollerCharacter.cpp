@@ -103,7 +103,8 @@ void ATP_SideScrollerCharacter::Interaction_Implementation(AActor* Projectile)
 		if (Cast<APortalEXProjectile>(Projectile)) {
 			Projectile->Destroy();
 		}
-	Jump();
+	GetCharacterMovement()->Launch(FVector(0, 0, GetCharacterMovement()->JumpZVelocity));
+	//Jump();
 }
 
 void ATP_SideScrollerCharacter::BeginPlay()
