@@ -29,6 +29,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StageData")
 		bool isClear;
+
 };
 /**
  * 
@@ -53,10 +54,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameInstance|Function")
 		FStageData GetCurrentStageData() const;
 
-	UFUNCTION(BlueprintCallable, Category = "GameInstance|Function")
-		void isStage();
-	UFUNCTION(BlueprintCallable, Category = "GameInstance|Function")
-		void isNotStage();
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameInstance|Function")

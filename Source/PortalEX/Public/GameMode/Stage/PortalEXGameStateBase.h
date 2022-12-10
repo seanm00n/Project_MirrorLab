@@ -40,6 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameState|Function")
 	EStageState GetState() const;
 
+
 	UFUNCTION(BlueprintCallable, Category = "GameState|Function")
 		FName GetCurrentLevelName()const;
 	UFUNCTION(BlueprintCallable, Category = "GameState|Function")

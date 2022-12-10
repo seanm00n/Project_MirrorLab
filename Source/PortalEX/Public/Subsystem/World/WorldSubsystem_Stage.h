@@ -30,6 +30,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WorldSub|Ammo")
 		int32 GetAmmo() const;
 
+	UFUNCTION(BlueprintCallable, Category = "WorldSub|Level")
+	void SetLevelName(FString newName);
+	UFUNCTION(BlueprintCallable, Category = "WorldSub|Level")
+	FString GetLevelName() const;
+
 	UFUNCTION()
 		void SetTimer();
 	UFUNCTION()
@@ -37,10 +42,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameInstance|Function")
 		FTimerHandle GetTimerHandle() const;
-
+	UFUNCTION()
+		void Init();
 protected:
-
-	virtual void Initialize(FSubsystemCollectionBase& Collection);
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Parameter|Ammo", meta = (AllowPrivateAccess = "true"))
 		int32 CurrentStageAmmo;
@@ -50,6 +55,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Parameter|Time", meta = (PrivateAccessAllow = "true"))
 		float CurrentStageTime;
+
+	UPROPERTY(VisibleAnywhere, Category = "Parameter|Level", meta = (PrivateAccessAllow = "true"))
+	FString CurrentStageLevelName;
 
 	UPROPERTY(VisibleAnywhere, Category = "Parameter|Time", meta = (AllowPrivateAccess = "true"))
 		FTimerHandle StageTimerHandle;

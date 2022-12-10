@@ -23,7 +23,7 @@ bool UWorldSubsystem_Stage::ShouldCreateSubsystem(UObject* Outer) const
     }
 
     UE_LOG(LogTemp, Warning, TEXT("ShouldCreateSubsystem WorldSubSystem fail"));
-    return false;
+    return true;
 }
 
 float UWorldSubsystem_Stage::GetTime() const
@@ -42,8 +42,19 @@ int32 UWorldSubsystem_Stage::GetScore() const
     return CurrentStageScore;
 }
 
+void UWorldSubsystem_Stage::SetLevelName(FString newName)
+{
+    CurrentStageLevelName = newName;
+}
+FString UWorldSubsystem_Stage::GetLevelName() const
+{
+    return CurrentStageLevelName;
+}
+
 void UWorldSubsystem_Stage::SetTimer()
 {
+
+    UE_LOG(LogTemp, Warning, TEXT("UWorldSubsystem_Stage , SetTimer"));
     GetWorld()->GetTimerManager().SetTimer(StageTimerHandle, this, &UWorldSubsystem_Stage::TimeCount, 1.0f, true);
 }
 
@@ -55,7 +66,7 @@ void UWorldSubsystem_Stage::TimeCount()
         GetWorld()->GetTimerManager().ClearTimer(StageTimerHandle);
         //Test 삭제예정
         auto gameState = Cast<APortalEXGameStateBase>(GetWorld()->GetGameState());
-        gameState->Clear();
+        gameState->Restart();
         return;
     }
     CurrentStageTime--;
@@ -66,10 +77,9 @@ FTimerHandle UWorldSubsystem_Stage::GetTimerHandle() const
     return StageTimerHandle;
 }
 
-void UWorldSubsystem_Stage::Initialize(FSubsystemCollectionBase& Collection)
+void UWorldSubsystem_Stage::Init()
 {
-    Super::Initialize(Collection);
-
+    UE_LOG(LogTemp, Warning, TEXT("UWorldSubsystem_Stage,Initialize"));
     auto gameInstance = Cast<UPortalEXGameInstance>(GetWorld()->GetGameInstance());
     if (!gameInstance) {
         UE_LOG(LogTemp, Warning, TEXT("GameInstance cast fail"));
@@ -77,16 +87,20 @@ void UWorldSubsystem_Stage::Initialize(FSubsystemCollectionBase& Collection)
     }
 
     UE_LOG(LogTemp, Warning, TEXT("GameInstance cast success"));
-    auto StageData = gameInstance->Load(gameInstance->GetCurrentStageData());
+    auto StageData = gameInstance->GetCurrentStageData();
 
     CurrentStageTime = StageData.StageTime;
     UE_LOG(LogTemp, Warning, TEXT("Time : %f"), CurrentStageTime);
     CurrentStageAmmo = StageData.StageAmmo;
     UE_LOG(LogTemp, Warning, TEXT("CurrentStageAmmo : %d"), CurrentStageAmmo);
-   
-
-    //GetWorld()->GetTimerManager().SetTimer(StageCountDownTimerHandle, this, &UWorldSubsystem_Stage::TimeCount, 1.0f,true);
+    CurrentStageLevelName = StageData.LevelName;
 }
+
+void UWorldSubsystem_Stage::Initialize(FSubsystemCollectionBase& Collection)
+{
+    Init();
+}
+
 
 void UWorldSubsystem_Stage::SetAmmo(int32 newAmmo)
 {
