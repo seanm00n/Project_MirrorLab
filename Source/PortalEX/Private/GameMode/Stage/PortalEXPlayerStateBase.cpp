@@ -6,7 +6,7 @@
 #include<Subsystem/World/WorldSubsystem_Stage.h>
 
 APortalEXPlayerStateBase::APortalEXPlayerStateBase()
-	:mAmmo(3)
+	:mAmmo(8)
 {
 }
 

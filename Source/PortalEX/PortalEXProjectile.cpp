@@ -45,6 +45,9 @@ void APortalEXProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
 			Interfact->Execute_Interaction(OtherActor, this);
 		}
 	}
+	else if (Cast<APortalEXProjectile>(OtherActor)) {
+
+	}
 	else {
 		Destroy();
 	}
