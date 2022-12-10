@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/GameInstanceSubsystem.h"
 #include "AmmoSubsystem.generated.h"
 
 /**
@@ -18,11 +17,7 @@ public:
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const;
 
 	/** Implement this for initialization of instances of the system */
-	virtual void Initialize(FSubsystemCollectionBase& Collection) {}
-
-	/** Implement this for deinitialization of instances of the system */
-	virtual void Deinitialize() {}
-
+	virtual void Initialize(FSubsystemCollectionBase& Collection);
 	
 	UFUNCTION(BlueprintCallable, Category = "SubSystem")
 		void SetAmmo(int32 newAmmo);

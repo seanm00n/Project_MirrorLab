@@ -3,6 +3,7 @@
 
 #include "GameMode/Stage/PortalEXPlayerStateBase.h"
 #include "Subsystem/Player/AmmoSubsystem.h"
+#include<Subsystem/World/WorldSubsystem_Stage.h>
 
 APortalEXPlayerStateBase::APortalEXPlayerStateBase()
 	:mAmmo(3)
@@ -11,9 +12,11 @@ APortalEXPlayerStateBase::APortalEXPlayerStateBase()
 
 void APortalEXPlayerStateBase::BeginPlay()
 {
-	auto subsystem = UGameInstance::GetSubsystem<UAmmoSubsystem>(GetGameInstance());
-	if (subsystem) {
-		mAmmo = subsystem->GetAmmo();
+	//auto worldSubSystem = UGame
+	auto MyWorldSubsystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
+	if (MyWorldSubsystem) {
+		UE_LOG(LogTemp, Warning, TEXT("APortalEXPlayerStateBase init"));
+		mAmmo = MyWorldSubsystem->GetAmmo();
 	}
 }
 

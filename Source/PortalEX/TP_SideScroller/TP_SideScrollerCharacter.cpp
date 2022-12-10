@@ -12,6 +12,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameMode/Stage/PortalEXPlayerStateBase.h"
+#include "GameMode/Stage/PortalEXGameStateBase.h"
+#include <Subsystem/World/WorldSubsystem_Stage.h>
 
 
 ATP_SideScrollerCharacter::ATP_SideScrollerCharacter()
@@ -108,7 +110,11 @@ void ATP_SideScrollerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	auto GameState = Cast<APortalEXGameStateBase>(GetWorld()->GetGameState());
+	if (GameState) {
+		UE_LOG(LogTemp, Warning, TEXT("GameState,Start"));
+		GameState->Start();
+	}
 
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
@@ -161,14 +167,20 @@ void ATP_SideScrollerCharacter::OnFire()
 				FActorSpawnParameters ActorSpawnParams;
 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
+				UE_LOG(LogTemp, Warning, TEXT("spawnProjectile"));
 				auto playerState = Cast<APortalEXPlayerStateBase>(GetPlayerState());
-				if (playerState && playerState->GetAmmo() > 0) {
-
-					// spawn the projectile at the muzzle
-					auto projectile = World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-					if (projectile) {
-						playerState->UseAmmo();
+				if (playerState) {
+					if (playerState->GetAmmo() > 0) {
+						// spawn the projectile at the muzzle
+						auto projectile = World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+						if (projectile) {
+							playerState->UseAmmo();
+						}
 					}
+
+				}
+				else {
+					auto projectile = World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
 
 				}
 			}
