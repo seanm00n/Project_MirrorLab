@@ -95,6 +95,15 @@ void ATP_SideScrollerCharacter::Interaction_Implementation(AActor* Projectile)
 
 }
 
+
+void ATP_SideScrollerCharacter::PlayTimerSound()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ATP_SideScrollerCharacter::PlayTimerSound"));
+	if (TimerSound != nullptr) {
+		UGameplayStatics::PlaySoundAtLocation(this, TimerSound, GetActorLocation());
+	}
+}
+
 void ATP_SideScrollerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -105,6 +114,16 @@ void ATP_SideScrollerCharacter::BeginPlay()
 		GameState->Start();
 	}
 
+	auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
+
+	if (WorldSubSystem) {
+		
+		WorldSubSystem->TimerDelegate.AddDynamic(this,&ATP_SideScrollerCharacter::PlayTimerSound);
+		if (WorldSubSystem->TimerDelegate.IsBound()) {
+
+			UE_LOG(LogTemp, Warning, TEXT("WorldSubSystem->TimerDelegate.IsBound"));
+		}
+	}
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 

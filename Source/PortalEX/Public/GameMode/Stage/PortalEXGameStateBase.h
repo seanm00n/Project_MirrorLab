@@ -47,6 +47,8 @@ public:
 		void SetCurrentLevelName(FName levelName);
 protected:
 	void SetGamePaused(bool bIsPaused);
+private:
+	
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Parameter", meta = (AllowPrivateAccess = "true"))
@@ -59,4 +61,7 @@ private:
 		FName MainLevelName;
 
 	EStageState mStageState;
+
+	
+
 };

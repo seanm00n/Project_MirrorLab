@@ -26,7 +26,6 @@ void APortalEXGameStateBase::Start()
 		//WorldSubSystem->Init();
 		WorldSubSystem->SetTimer();
 		WorldSubSystem->SetScore(0);
-
 	}
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::WorldSubSystem,fail"));
@@ -108,6 +107,8 @@ void APortalEXGameStateBase::SetGamePaused(bool bIsPaused)
 		MyPlayer->SetPause(bIsPaused);
 	}
 }
+
+
 
 EStageState APortalEXGameStateBase::GetState() const
 {

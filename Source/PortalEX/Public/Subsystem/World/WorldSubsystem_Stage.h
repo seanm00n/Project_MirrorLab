@@ -5,13 +5,18 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "WorldSubsystem_Stage.generated.h"
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTimerSignature);
 /**
  * 
  */
+
 UCLASS()
 class PORTALEX_API UWorldSubsystem_Stage : public UWorldSubsystem
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Collision")
+	FTimerSignature TimerDelegate;
 public:
 
 
@@ -35,6 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WorldSub|Level")
 	FString GetLevelName() const;
 
+	
+
 	UFUNCTION()
 		void SetTimer();
 	UFUNCTION()
@@ -54,7 +61,7 @@ private:
 		int32 CurrentStageScore;
 
 	UPROPERTY(VisibleAnywhere, Category = "Parameter|Time", meta = (PrivateAccessAllow = "true"))
-		float CurrentStageTime;
+	int32 CurrentStageTime;
 
 	UPROPERTY(VisibleAnywhere, Category = "Parameter|Level", meta = (PrivateAccessAllow = "true"))
 	FString CurrentStageLevelName;

@@ -87,6 +87,8 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 		void Interaction(AActor* Projectile);
 	virtual void Interaction_Implementation(AActor* Projectile) override;
+	UFUNCTION()
+	void PlayTimerSound();
 
 public:
 	ATP_SideScrollerCharacter();
@@ -95,5 +97,8 @@ public:
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	USoundBase* TimerSound;
 
 };

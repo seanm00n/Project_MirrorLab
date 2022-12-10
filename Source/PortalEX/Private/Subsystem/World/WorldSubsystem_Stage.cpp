@@ -3,8 +3,10 @@
 
 #include "Subsystem/World/WorldSubsystem_Stage.h"
 #include "Subsystem/World/PortalEXWorldSettings.h"
+#include "GameFramework/PlayerController.h"
 #include <PortalEXGameInstance.h>
 #include <PortalEX/Public/GameMode/Stage/PortalEXGameStateBase.h>
+#include <Kismet/GameplayStatics.h>
 
 bool UWorldSubsystem_Stage::ShouldCreateSubsystem(UObject* Outer) const
 {
@@ -51,6 +53,7 @@ FString UWorldSubsystem_Stage::GetLevelName() const
     return CurrentStageLevelName;
 }
 
+
 void UWorldSubsystem_Stage::SetTimer()
 {
 
@@ -60,7 +63,13 @@ void UWorldSubsystem_Stage::SetTimer()
 
 void UWorldSubsystem_Stage::TimeCount()
 {
-    UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : %f"), CurrentStageTime);
+    CurrentStageTime--;
+    UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : %d"), CurrentStageTime);
+    
+    if (CurrentStageTime == 20) {
+        UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : 20,delegate Broadcast"));
+        TimerDelegate.Broadcast();
+    }
     if (CurrentStageTime <= 0) {
 
         GetWorld()->GetTimerManager().ClearTimer(StageTimerHandle);
@@ -69,7 +78,6 @@ void UWorldSubsystem_Stage::TimeCount()
         gameState->Restart();
         return;
     }
-    CurrentStageTime--;
 }
 
 FTimerHandle UWorldSubsystem_Stage::GetTimerHandle() const
