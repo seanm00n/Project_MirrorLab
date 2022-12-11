@@ -40,12 +40,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameState|Function")
 	EStageState GetState() const;
 
+
 	UFUNCTION(BlueprintCallable, Category = "GameState|Function")
 		FName GetCurrentLevelName()const;
 	UFUNCTION(BlueprintCallable, Category = "GameState|Function")
 		void SetCurrentLevelName(FName levelName);
 protected:
 	void SetGamePaused(bool bIsPaused);
+private:
+	
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Parameter", meta = (AllowPrivateAccess = "true"))
@@ -58,4 +61,7 @@ private:
 		FName MainLevelName;
 
 	EStageState mStageState;
+
+	
+
 };

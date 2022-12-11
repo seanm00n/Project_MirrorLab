@@ -40,19 +40,19 @@ void ASwitchObj::Interaction_Implementation(AActor* Projectile)
 		switch (OpenType)
 		{
 		case EOpenDir::Right:
-			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, -OpenRightDistance, 0), GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
+			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, -OpenRightDistance, 0), DoorRef->GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
 
 			break;
 		case EOpenDir::Left:
-			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, OpenLeftDistance, 0), GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
+			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, OpenLeftDistance, 0), DoorRef->GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
 
 			break;
 		case EOpenDir::Up:
-			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, 0, OpenUpDistance), GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
+			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, 0, OpenUpDistance), DoorRef->GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
 
 			break;
 		case EOpenDir::Down:
-			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, 0, -OpenDownDistance), GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
+			UKismetSystemLibrary::MoveComponentTo(DoorRef->GetRootComponent(), DoorRef->GetActorLocation() + FVector(0, 0, -OpenDownDistance), DoorRef->GetActorRotation(), false, false, 0.2, false, EMoveComponentAction::Type::Move, LatentInfo);
 
 			break;
 		default:

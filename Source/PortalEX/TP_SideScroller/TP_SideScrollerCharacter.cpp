@@ -50,26 +50,14 @@ ATP_SideScrollerCharacter::ATP_SideScrollerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
 	GetCharacterMovement()->RotationRate = FRotator(-1.0f, -1.0f, -1.0f);
-	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);
-	//Mesh1P->SetupAttachment(RootComponent);
-	Mesh1P->bCastDynamicShadow = false;
-	Mesh1P->CastShadow = false;
-	//Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
-	//Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-	// Create a gun mesh component
-	FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
-	FP_Gun->SetOnlyOwnerSee(false);			// otherwise won't be visible in the multiplayer
-	FP_Gun->bCastDynamicShadow = false;
-	FP_Gun->CastShadow = false;
-	// FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
-	FP_Gun->SetupAttachment(RootComponent);
+	Pos_Gun = CreateDefaultSubobject<USceneComponent>(TEXT("POSGUN"));
+	Pos_Gun->SetupAttachment(RootComponent);
+	Pos_Gun->SetRelativeLocation(FVector(33.0f, 5.0f, -9.0f));
 
-	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
-	FP_MuzzleLocation->SetupAttachment(FP_Gun);
-	FP_MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
+	MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MUZZLEPOSITION"));
+	MuzzleLocation->SetupAttachment(Pos_Gun);
+	MuzzleLocation->SetRelativeLocation(FVector(7.0f, 0.0f, 7.0f));
 
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(100.0f, 0.0f, 10.0f);
@@ -83,8 +71,8 @@ ATP_SideScrollerCharacter::ATP_SideScrollerCharacter()
 void ATP_SideScrollerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// set up gameplay key bindings
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping); //Jump Kep input enabled
 
 
 	// Bind fire event
@@ -104,7 +92,16 @@ void ATP_SideScrollerCharacter::Interaction_Implementation(AActor* Projectile)
 			Projectile->Destroy();
 		}
 	GetCharacterMovement()->Launch(FVector(0, 0, GetCharacterMovement()->JumpZVelocity));
-	//Jump();
+
+}
+
+
+void ATP_SideScrollerCharacter::PlayTimerSound()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ATP_SideScrollerCharacter::PlayTimerSound"));
+	if (TimerSound != nullptr) {
+		UGameplayStatics::PlaySoundAtLocation(this, TimerSound, GetActorLocation());
+	}
 }
 
 void ATP_SideScrollerCharacter::BeginPlay()
@@ -117,6 +114,16 @@ void ATP_SideScrollerCharacter::BeginPlay()
 		GameState->Start();
 	}
 
+	auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
+
+	if (WorldSubSystem) {
+		
+		WorldSubSystem->TimerDelegate.AddDynamic(this,&ATP_SideScrollerCharacter::PlayTimerSound);
+		if (WorldSubSystem->TimerDelegate.IsBound()) {
+
+			UE_LOG(LogTemp, Warning, TEXT("WorldSubSystem->TimerDelegate.IsBound"));
+		}
+	}
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 
@@ -141,49 +148,42 @@ void ATP_SideScrollerCharacter::OnFire()
 		UWorld* const World = GetWorld();
 		if (World != nullptr)
 		{
-			if (bUsingMotionControllers)
-			{
-				const FRotator SpawnRotation = VR_MuzzleLocation->GetComponentRotation();
-				const FVector SpawnLocation = VR_MuzzleLocation->GetComponentLocation();
-				World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+
+			float Direction = Dot3(
+				GetActorRightVector(),
+				GetActorRotation().Vector() * -1);
+			FRotator rotation;
+			if (Direction > 0) {
+				rotation = FRotator(0, 90, 0);
 			}
-			else
-			{
-				float Direction = Dot3(
-					GetActorRightVector(),
-					GetActorRotation().Vector()*-1);
-				FRotator rotation;
-				if (Direction > 0) {
-					rotation = FRotator(0, 90, 0);
-				}
-				else {
-					rotation = FRotator(0, -90, 0);
-				}
+			else {
+				rotation = FRotator(0, -90, 0);
+			}
 
-				const FRotator SpawnRotation = rotation;
-				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-				const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+			const FRotator SpawnRotation = rotation;
+			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+			const FVector SpawnLocation = ((MuzzleLocation != nullptr) ? MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
 
-				//Set Spawn Collision Handling Override
-				FActorSpawnParameters ActorSpawnParams;
-				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+			//Set Spawn Collision Handling Override
+			FActorSpawnParameters ActorSpawnParams;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-				UE_LOG(LogTemp, Warning, TEXT("spawnProjectile"));
-				auto playerState = Cast<APortalEXPlayerStateBase>(GetPlayerState());
-				if (playerState) {
-					if (playerState->GetAmmo() > 0) {
-						// spawn the projectile at the muzzle
-						auto projectile = World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-						if (projectile) {
-							playerState->UseAmmo();
-						}
-					}
-
-				}
-				else {
+			UE_LOG(LogTemp, Warning, TEXT("spawnProjectile"));
+			auto playerState = Cast<APortalEXPlayerStateBase>(GetPlayerState());
+			if (playerState) {
+				if (playerState->GetAmmo() > 0) {
+					// spawn the projectile at the muzzle
 					auto projectile = World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-
+					if (projectile) {
+						playerState->UseAmmo();
+					}
 				}
+
+			}
+			else {
+				auto projectile = World->SpawnActor<APortalEXProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+
+
 			}
 		}
 	}
@@ -191,19 +191,11 @@ void ATP_SideScrollerCharacter::OnFire()
 	// try and play the sound if specified
 	if (FireSound != nullptr)
 	{
+	
 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
 
-	// try and play a firing animation if specified
-	if (FireAnimation != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if (AnimInstance != nullptr)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
-	}
+	
 }
 void ATP_SideScrollerCharacter::MoveRight(float Value)
 {

@@ -2,6 +2,7 @@
 
 
 #include "Interaction/MirrorObj.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AMirrorObj::AMirrorObj()
@@ -27,5 +28,8 @@ void AMirrorObj::Tick(float DeltaTime)
 
 void AMirrorObj::Interaction_Implementation(AActor* Projectile)
 {
+	if (HitSound != nullptr) {
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+	}
 }
 
