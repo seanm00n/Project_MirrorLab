@@ -16,15 +16,19 @@ APortalEXGameStateBase::APortalEXGameStateBase()
 void APortalEXGameStateBase::Start()
 {
 	//점수 init, 타이머 init, 
-	auto WorldSetting = Cast<APortalEXWorldSettings>(GetWorld()->GetWorldSettings());
-	if (WorldSetting) {
-		UE_LOG(LogTemp, Warning, TEXT("ShouldCreateSubsystem WorldSubSystem success"));
-		if (WorldSetting->bCurrentStage) {
-			auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
-			WorldSubSystem->SetTimer();
-			WorldSubSystem->SetScore(0);
-			CurrentLevelName = FName((GetWorld()->GetCurrentLevel()->GetName()));
-		}
+
+	UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::Start"));
+	auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
+	
+	if (WorldSubSystem) {
+		UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::WorldSubSystem"));
+		CurrentLevelName = FName(WorldSubSystem->GetLevelName());
+		//WorldSubSystem->Init();
+		WorldSubSystem->SetTimer();
+		WorldSubSystem->SetScore(0);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::WorldSubSystem,fail"));
 	}
 }
 
@@ -52,11 +56,8 @@ void APortalEXGameStateBase::Restart()
 	// stage load or PlayState init, stage Stage 호출
 	// 
 	// 현재 레벨 이름은 디테일에서 편집
-	if (CurrentLevelName != "")
-	{
-		UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::Restart"));
-		UGameplayStatics::OpenLevel(this, CurrentLevelName);
-	}
+
+	UGameplayStatics::OpenLevel(this, CurrentLevelName);
 
 }
 
@@ -68,6 +69,7 @@ void APortalEXGameStateBase::Clear()
 		auto StageData = GameInstance->GetCurrentStageData();
 
 		auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
+		WorldSubSystem->ClearTimer();
 		auto clearHUD = CreateWidget<UUserWidget>(GetGameInstance(), ClearWidgetClass);
 		StageData.Score += 35 * WorldSubSystem->GetTime();
 		WorldSubSystem->SetScore(StageData.Score);
@@ -75,7 +77,9 @@ void APortalEXGameStateBase::Clear()
 		if (clearHUD) {
 			clearHUD->AddToViewport();
 		}
-		Pause();
+
+		//Pause();
+
 		GameInstance->Save(StageData);
 		auto Controller = GetWorld()->GetFirstPlayerController();
 		if (Controller) {
@@ -104,6 +108,8 @@ void APortalEXGameStateBase::SetGamePaused(bool bIsPaused)
 		MyPlayer->SetPause(bIsPaused);
 	}
 }
+
+
 
 EStageState APortalEXGameStateBase::GetState() const
 {
