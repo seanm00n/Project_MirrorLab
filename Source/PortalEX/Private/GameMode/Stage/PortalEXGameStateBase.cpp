@@ -69,6 +69,7 @@ void APortalEXGameStateBase::Clear()
 		auto StageData = GameInstance->GetCurrentStageData();
 
 		auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
+		WorldSubSystem->ClearTimer();
 		auto clearHUD = CreateWidget<UUserWidget>(GetGameInstance(), ClearWidgetClass);
 		StageData.Score += 35 * WorldSubSystem->GetTime();
 		WorldSubSystem->SetScore(StageData.Score);
@@ -77,7 +78,7 @@ void APortalEXGameStateBase::Clear()
 			clearHUD->AddToViewport();
 		}
 
-		Pause();
+		//Pause();
 
 		GameInstance->Save(StageData);
 		auto Controller = GetWorld()->GetFirstPlayerController();

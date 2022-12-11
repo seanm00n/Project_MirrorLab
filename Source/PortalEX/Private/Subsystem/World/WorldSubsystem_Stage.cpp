@@ -25,7 +25,7 @@ bool UWorldSubsystem_Stage::ShouldCreateSubsystem(UObject* Outer) const
     }
 
     UE_LOG(LogTemp, Warning, TEXT("ShouldCreateSubsystem WorldSubSystem fail"));
-    return true;
+    return false;
 }
 
 float UWorldSubsystem_Stage::GetTime() const
@@ -61,11 +61,16 @@ void UWorldSubsystem_Stage::SetTimer()
     GetWorld()->GetTimerManager().SetTimer(StageTimerHandle, this, &UWorldSubsystem_Stage::TimeCount, 1.0f, true);
 }
 
+void UWorldSubsystem_Stage::ClearTimer()
+{
+    GetWorld()->GetTimerManager().ClearTimer(StageTimerHandle);
+}
+
 void UWorldSubsystem_Stage::TimeCount()
 {
     CurrentStageTime--;
     UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : %d"), CurrentStageTime);
-    
+
     if (CurrentStageTime == 20) {
         UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : 20,delegate Broadcast"));
         TimerDelegate.Broadcast();

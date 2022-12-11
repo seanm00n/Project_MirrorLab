@@ -45,10 +45,12 @@ public:
 	UFUNCTION()
 		void SetTimer();
 	UFUNCTION()
+	void ClearTimer();
+	UFUNCTION()
 		void TimeCount();
 
 	UFUNCTION(BlueprintCallable, Category = "GameInstance|Function")
-		FTimerHandle GetTimerHandle() const;
+	FTimerHandle GetTimerHandle() const;
 	UFUNCTION()
 		void Init();
 protected:
