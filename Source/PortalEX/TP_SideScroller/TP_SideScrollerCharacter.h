@@ -20,15 +20,24 @@ class ATP_SideScrollerCharacter : public ACharacter ,public IInteractionInterfac
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		USkeletalMeshComponent* Mesh1P;
+
+	/** Gun mesh: 1st person view (seen only by self) */
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		USkeletalMeshComponent* FP_Gun;
+
+	/** Location on gun mesh where projectiles should spawn. */
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		USceneComponent* FP_MuzzleLocation;
 
 	/** Gun mesh: VR view (attached to the VR controller directly, no arm, just the actual gun) */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-		USceneComponent* Pos_Gun;
+		USkeletalMeshComponent* VR_Gun;
 
 	/** Location on VR gun mesh where projectiles should spawn. */
-	UPROPERTY(EditDefaultsOnly, Category = Mesh)
-		USceneComponent* MuzzleLocation;
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		USceneComponent* VR_MuzzleLocation;
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -87,8 +96,6 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 		void Interaction(AActor* Projectile);
 	virtual void Interaction_Implementation(AActor* Projectile) override;
-	UFUNCTION()
-	void PlayTimerSound();
 
 public:
 	ATP_SideScrollerCharacter();
@@ -98,7 +105,7 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	USoundBase* TimerSound;
-
+public:
+	/** Returns Mesh1P subobject **/
+	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 };

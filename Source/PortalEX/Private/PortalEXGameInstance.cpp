@@ -32,6 +32,22 @@ FStageData UPortalEXGameInstance::GetCurrentStageData() const
 	return mStageData;
 }
 
+void UPortalEXGameInstance::isStage()
+{
+	auto WorldSetting = Cast<APortalEXWorldSettings>(GetWorld()->GetWorldSettings());
+	if (WorldSetting) {
+		WorldSetting->bCurrentStage = true;
+	}
+
+}
+
+void UPortalEXGameInstance::isNotStage()
+{
+	auto WorldSetting = Cast<APortalEXWorldSettings>(GetWorld()->GetWorldSettings());
+	if (WorldSetting) {
+		WorldSetting->bCurrentStage = false;
+	}
+}
 
 void UPortalEXGameInstance::Save(const FStageData& StageData)
 {
@@ -52,7 +68,6 @@ FStageData UPortalEXGameInstance::Load(const FStageData& StageData)
 	if (loadData) {
 		mStageData = loadData->SaveStageDate;
 	}
-
 	
 	return mStageData;
 }

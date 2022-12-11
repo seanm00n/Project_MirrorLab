@@ -15,5 +15,6 @@ class PORTALEX_API APortalEXWorldSettings : public AWorldSettings
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-		bool bCurrentStage;
+		bool bCurrentStage = false;
+
 };

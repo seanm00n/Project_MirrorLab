@@ -16,19 +16,15 @@ APortalEXGameStateBase::APortalEXGameStateBase()
 void APortalEXGameStateBase::Start()
 {
 	//점수 init, 타이머 init, 
-
-	UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::Start"));
-	auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
-	
-	if (WorldSubSystem) {
-		UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::WorldSubSystem"));
-		CurrentLevelName = FName(WorldSubSystem->GetLevelName());
-		//WorldSubSystem->Init();
-		WorldSubSystem->SetTimer();
-		WorldSubSystem->SetScore(0);
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::WorldSubSystem,fail"));
+	auto WorldSetting = Cast<APortalEXWorldSettings>(GetWorld()->GetWorldSettings());
+	if (WorldSetting) {
+		UE_LOG(LogTemp, Warning, TEXT("ShouldCreateSubsystem WorldSubSystem success"));
+		if (WorldSetting->bCurrentStage) {
+			auto WorldSubSystem = GetWorld()->GetSubsystem<UWorldSubsystem_Stage>();
+			WorldSubSystem->SetTimer();
+			WorldSubSystem->SetScore(0);
+			CurrentLevelName = FName((GetWorld()->GetCurrentLevel()->GetName()));
+		}
 	}
 }
 
@@ -56,8 +52,11 @@ void APortalEXGameStateBase::Restart()
 	// stage load or PlayState init, stage Stage 호출
 	// 
 	// 현재 레벨 이름은 디테일에서 편집
-
-	UGameplayStatics::OpenLevel(this, CurrentLevelName);
+	if (CurrentLevelName != "")
+	{
+		UE_LOG(LogTemp, Warning, TEXT("APortalEXGameStateBase::Restart"));
+		UGameplayStatics::OpenLevel(this, CurrentLevelName);
+	}
 
 }
 
@@ -76,9 +75,7 @@ void APortalEXGameStateBase::Clear()
 		if (clearHUD) {
 			clearHUD->AddToViewport();
 		}
-
 		Pause();
-
 		GameInstance->Save(StageData);
 		auto Controller = GetWorld()->GetFirstPlayerController();
 		if (Controller) {
@@ -107,8 +104,6 @@ void APortalEXGameStateBase::SetGamePaused(bool bIsPaused)
 		MyPlayer->SetPause(bIsPaused);
 	}
 }
-
-
 
 EStageState APortalEXGameStateBase::GetState() const
 {

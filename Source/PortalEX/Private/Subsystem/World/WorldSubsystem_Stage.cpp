@@ -3,10 +3,8 @@
 
 #include "Subsystem/World/WorldSubsystem_Stage.h"
 #include "Subsystem/World/PortalEXWorldSettings.h"
-#include "GameFramework/PlayerController.h"
 #include <PortalEXGameInstance.h>
 #include <PortalEX/Public/GameMode/Stage/PortalEXGameStateBase.h>
-#include <Kismet/GameplayStatics.h>
 
 bool UWorldSubsystem_Stage::ShouldCreateSubsystem(UObject* Outer) const
 {
@@ -25,7 +23,7 @@ bool UWorldSubsystem_Stage::ShouldCreateSubsystem(UObject* Outer) const
     }
 
     UE_LOG(LogTemp, Warning, TEXT("ShouldCreateSubsystem WorldSubSystem fail"));
-    return true;
+    return false;
 }
 
 float UWorldSubsystem_Stage::GetTime() const
@@ -44,40 +42,23 @@ int32 UWorldSubsystem_Stage::GetScore() const
     return CurrentStageScore;
 }
 
-void UWorldSubsystem_Stage::SetLevelName(FString newName)
-{
-    CurrentStageLevelName = newName;
-}
-FString UWorldSubsystem_Stage::GetLevelName() const
-{
-    return CurrentStageLevelName;
-}
-
-
 void UWorldSubsystem_Stage::SetTimer()
 {
-
-    UE_LOG(LogTemp, Warning, TEXT("UWorldSubsystem_Stage , SetTimer"));
     GetWorld()->GetTimerManager().SetTimer(StageTimerHandle, this, &UWorldSubsystem_Stage::TimeCount, 1.0f, true);
 }
 
 void UWorldSubsystem_Stage::TimeCount()
 {
-    CurrentStageTime--;
-    UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : %d"), CurrentStageTime);
-    
-    if (CurrentStageTime == 20) {
-        UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : 20,delegate Broadcast"));
-        TimerDelegate.Broadcast();
-    }
+    UE_LOG(LogTemp, Warning, TEXT("CurrentStageTime , TimeCount : %f"), CurrentStageTime);
     if (CurrentStageTime <= 0) {
 
         GetWorld()->GetTimerManager().ClearTimer(StageTimerHandle);
         //Test 삭제예정
         auto gameState = Cast<APortalEXGameStateBase>(GetWorld()->GetGameState());
-        gameState->Restart();
+        gameState->Clear();
         return;
     }
+    CurrentStageTime--;
 }
 
 FTimerHandle UWorldSubsystem_Stage::GetTimerHandle() const
@@ -85,9 +66,10 @@ FTimerHandle UWorldSubsystem_Stage::GetTimerHandle() const
     return StageTimerHandle;
 }
 
-void UWorldSubsystem_Stage::Init()
+void UWorldSubsystem_Stage::Initialize(FSubsystemCollectionBase& Collection)
 {
-    UE_LOG(LogTemp, Warning, TEXT("UWorldSubsystem_Stage,Initialize"));
+    Super::Initialize(Collection);
+
     auto gameInstance = Cast<UPortalEXGameInstance>(GetWorld()->GetGameInstance());
     if (!gameInstance) {
         UE_LOG(LogTemp, Warning, TEXT("GameInstance cast fail"));
@@ -95,20 +77,16 @@ void UWorldSubsystem_Stage::Init()
     }
 
     UE_LOG(LogTemp, Warning, TEXT("GameInstance cast success"));
-    auto StageData = gameInstance->GetCurrentStageData();
+    auto StageData = gameInstance->Load(gameInstance->GetCurrentStageData());
 
     CurrentStageTime = StageData.StageTime;
     UE_LOG(LogTemp, Warning, TEXT("Time : %f"), CurrentStageTime);
     CurrentStageAmmo = StageData.StageAmmo;
     UE_LOG(LogTemp, Warning, TEXT("CurrentStageAmmo : %d"), CurrentStageAmmo);
-    CurrentStageLevelName = StageData.LevelName;
-}
+   
 
-void UWorldSubsystem_Stage::Initialize(FSubsystemCollectionBase& Collection)
-{
-    Init();
+    //GetWorld()->GetTimerManager().SetTimer(StageCountDownTimerHandle, this, &UWorldSubsystem_Stage::TimeCount, 1.0f,true);
 }
-
 
 void UWorldSubsystem_Stage::SetAmmo(int32 newAmmo)
 {
